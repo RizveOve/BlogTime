@@ -69,12 +69,6 @@ const Login = () => {
           <div className="auth-links">
             <p>Don't have an account? <Link to="/register">Sign up</Link></p>
           </div>
-
-          <div className="demo-credentials">
-            <h3>Demo Credentials:</h3>
-            <p>Master: master@blog.com / master123</p>
-            <p>Or create your own account above</p>
-          </div>
         </div>
       </div>
     </div>

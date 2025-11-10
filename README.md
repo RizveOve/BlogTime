@@ -2,6 +2,12 @@
 
 A modern, responsive blog application built with React that features user authentication, content management, and a clean, intuitive interface for both readers and authors.
 
+## 🌐 Live Demo
+
+**Try BlogTime now:** [https://blogtimee.netlify.app/](https://blogtimee.netlify.app/)
+
+Experience all the features including user registration, blog creation, comments, likes/dislikes, and more!
+
 ## Features
 
 ### For Readers
@@ -179,12 +185,19 @@ REACT_APP_FIREBASE_APP_ID=your_app_id
 
 ## Demo Credentials
 
-The application comes with a pre-configured master account:
+To test the full functionality of BlogTime, you can use these demo accounts:
+
+### Master Account (Full Admin Access)
 
 - **Email**: master@blog.com
 - **Password**: master123
+- **Features**: Create posts, approve/reject author posts, manage all content, moderate comments
 
-You can also register new author accounts through the registration page.
+### Create Your Own Account
+
+You can also register new author accounts through the registration page to test the author experience.
+
+**Note**: Master credentials are not displayed on the login page for security, but are documented here for testing purposes.
 
 ## Project Structure
 
