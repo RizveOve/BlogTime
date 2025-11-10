@@ -138,6 +138,22 @@ service cloud.firestore {
     match /users/{document} {
       allow read, write: if request.auth != null;
     }
+
+    // Allow read access to comments, write only for authenticated users
+    match /comments/{document} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null &&
+        (resource.data.authorId == request.auth.uid ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'master');
+    }
+
+    // Allow read access to reactions, write only for authenticated users on their own reactions
+    match /reactions/{document} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+    }
   }
 }
 ```
@@ -316,6 +332,10 @@ If you encounter Firebase connection problems:
 - **"Firebase not initialized"**: Verify your Firebase config is correct
 - **Posts not loading**: Check browser network tab for failed requests
 - **Migration not running**: Clear browser cache and reload
+- **"The query requires an index" error**:
+  - Click the provided Firebase Console link in the error to create the index automatically
+  - The app includes fallback logic to work without indexes (with slower performance)
+  - Comments will still work, just without optimal sorting initially
 
 ## Support
 

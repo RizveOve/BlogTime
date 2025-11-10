@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Header.css';
+import SignInButton from './SignInButton';
+import UserDropdown from './UserDropdown';
 
 const Header = () => {
-  const { logout, isAuthor } = useAuth();
+  const { isAuthor } = useAuth();
 
   return (
     <header className="header">
@@ -16,14 +18,9 @@ const Header = () => {
             <Link to="/" className="nav-link">Home</Link>
             <Link to="/about" className="nav-link">About</Link>
             {isAuthor() ? (
-              <>
-                <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                <button onClick={logout} className="nav-link logout-btn">
-                  Logout
-                </button>
-              </>
+              <UserDropdown />
             ) : (
-              <Link to="/login" className="nav-link">Login</Link>
+              <SignInButton />
             )}
           </nav>
         </div>

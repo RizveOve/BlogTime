@@ -1,14 +1,17 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { blogService } from '../firebase/blogService';
-import { checkMigrationStatus, migrateDataToFirebase } from '../firebase/migrationScript';
-import { testFirebaseConnection } from '../firebase/testConnection';
+import { createContext, useContext, useEffect, useState } from "react";
+import { blogService } from "../firebase/blogService";
+import {
+  checkMigrationStatus,
+  migrateDataToFirebase,
+} from "../firebase/migrationScript";
+import { testFirebaseConnection } from "../firebase/testConnection";
 
 const BlogContext = createContext();
 
 export const useBlog = () => {
   const context = useContext(BlogContext);
   if (!context) {
-    throw new Error('useBlog must be used within a BlogProvider');
+    throw new Error("useBlog must be used within a BlogProvider");
   }
   return context;
 };
@@ -25,32 +28,31 @@ export const BlogProvider = ({ children }) => {
   const initializePosts = async () => {
     try {
       setLoading(true);
-      
+
       // First, test Firebase connection
-      console.log('Testing Firebase connection...');
+      console.log("Testing Firebase connection...");
       const connectionTest = await testFirebaseConnection();
-      
+
       if (!connectionTest.success) {
         throw new Error(`Firebase connection failed: ${connectionTest.error}`);
       }
-      
-      console.log('✅ Firebase connection successful');
-      
+
+      console.log("✅ Firebase connection successful");
+
       // Check if we have data in Firebase
       const hasMigratedData = await checkMigrationStatus();
-      
+
       if (!hasMigratedData) {
-        console.log('No data found in Firebase, running migration...');
+        console.log("No data found in Firebase, running migration...");
         const migrationResult = await migrateDataToFirebase();
-        console.log('Migration result:', migrationResult);
+        console.log("Migration result:", migrationResult);
       }
-      
+
       // Load posts from Firebase
       const firebasePosts = await blogService.getAllPosts();
       setPosts(firebasePosts);
-      
     } catch (error) {
-      console.error('Error initializing posts:', error);
+      console.error("Error initializing posts:", error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -62,7 +64,7 @@ export const BlogProvider = ({ children }) => {
       const firebasePosts = await blogService.getAllPosts();
       setPosts(firebasePosts);
     } catch (error) {
-      console.error('Error refreshing posts:', error);
+      console.error("Error refreshing posts:", error);
       setError(error.message);
     }
   };
@@ -73,7 +75,7 @@ export const BlogProvider = ({ children }) => {
       await refreshPosts();
       return newPost;
     } catch (error) {
-      console.error('Error adding post:', error);
+      console.error("Error adding post:", error);
       setError(error.message);
       throw error;
     }
@@ -84,7 +86,7 @@ export const BlogProvider = ({ children }) => {
       await blogService.updatePost(id, updatedPost);
       await refreshPosts();
     } catch (error) {
-      console.error('Error updating post:', error);
+      console.error("Error updating post:", error);
       setError(error.message);
       throw error;
     }
@@ -95,14 +97,15 @@ export const BlogProvider = ({ children }) => {
       await blogService.deletePost(id);
       await refreshPosts();
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error("Error deleting post:", error);
       setError(error.message);
       throw error;
     }
   };
 
   const getPost = (id) => {
-    return posts.find(post => post.id === id);
+    // Convert id to string for comparison since URL params are strings
+    return posts.find((post) => post.id.toString() === id.toString());
   };
 
   const approvePost = async (id) => {
@@ -110,7 +113,7 @@ export const BlogProvider = ({ children }) => {
       await blogService.approvePost(id);
       await refreshPosts();
     } catch (error) {
-      console.error('Error approving post:', error);
+      console.error("Error approving post:", error);
       setError(error.message);
       throw error;
     }
@@ -121,22 +124,22 @@ export const BlogProvider = ({ children }) => {
       await blogService.rejectPost(id);
       await refreshPosts();
     } catch (error) {
-      console.error('Error rejecting post:', error);
+      console.error("Error rejecting post:", error);
       setError(error.message);
       throw error;
     }
   };
 
   const getPublishedPosts = () => {
-    return posts.filter(post => post.status === 'published');
+    return posts.filter((post) => post.status === "published");
   };
 
   const getPendingPosts = () => {
-    return posts.filter(post => post.status === 'pending');
+    return posts.filter((post) => post.status === "pending");
   };
 
   const getUserPosts = (userId) => {
-    return posts.filter(post => post.authorId === userId);
+    return posts.filter((post) => post.authorId === userId);
   };
 
   const value = {
@@ -152,12 +155,8 @@ export const BlogProvider = ({ children }) => {
     getPublishedPosts,
     getPendingPosts,
     getUserPosts,
-    refreshPosts
+    refreshPosts,
   };
 
-  return (
-    <BlogContext.Provider value={value}>
-      {children}
-    </BlogContext.Provider>
-  );
+  return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 };

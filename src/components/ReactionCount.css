@@ -1,0 +1,49 @@
+.reaction-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reaction-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.reaction-item.likes {
+  color: #28a745;
+}
+
+.reaction-item.dislikes {
+  color: #dc3545;
+}
+
+.reaction-item.no-reactions {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.reaction-item.loading {
+  color: #666;
+  opacity: 0.6;
+}
+
+.reaction-item svg {
+  flex-shrink: 0;
+}
+
+.reaction-item.loading svg {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

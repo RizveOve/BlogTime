@@ -87,6 +87,52 @@ export const AuthProvider = ({ children }) => {
     return post.authorId === user.id;
   };
 
+  const updateUserProfile = async (updateData) => {
+    try {
+      // If password change is requested, verify current password first
+      if (updateData.newPassword) {
+        const currentUser = await userService.getUserByEmail(user.email);
+        if (!currentUser || currentUser.password !== updateData.currentPassword) {
+          return { success: false, error: 'Current password is incorrect' };
+        }
+      }
+
+      // Check if email is being changed and if it already exists
+      if (updateData.email !== user.email) {
+        const existingUser = await userService.getUserByEmail(updateData.email);
+        if (existingUser && existingUser.id !== user.id) {
+          return { success: false, error: 'Email already exists' };
+        }
+      }
+
+      // Prepare update data
+      const userUpdateData = {
+        name: updateData.name,
+        email: updateData.email,
+        password: updateData.newPassword || user.password // Keep existing password if not changing
+      };
+
+      // Update user in Firebase
+      const updatedUser = await userService.updateUser(user.id, userUpdateData);
+      
+      // Update local user state
+      const newUserData = {
+        id: user.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        role: user.role
+      };
+      
+      setUser(newUserData);
+      localStorage.setItem('blogUser', JSON.stringify(newUserData));
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return { success: false, error: 'Failed to update profile. Please try again.' };
+    }
+  };
+
   const value = {
     user,
     login,
@@ -95,6 +141,7 @@ export const AuthProvider = ({ children }) => {
     isAuthor,
     isMaster,
     canEditPost,
+    updateUserProfile,
     loading
   };
 

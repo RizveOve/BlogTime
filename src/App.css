@@ -86,12 +86,26 @@
   margin-bottom: 10px;
 }
 
+.blog-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.blog-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .read-more {
   color: #007bff;
   text-decoration: none;
   font-weight: 500;
   display: inline-block;
-  margin-top: 10px;
 }
 
 .read-more:hover {

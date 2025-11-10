@@ -1,0 +1,192 @@
+.post-reactions {
+  margin: 2rem 0;
+  padding: 1.5rem 0;
+  border-top: 2px solid #e9ecef;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reaction-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: #666;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.reaction-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reaction-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.like-btn {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.like-btn:hover:not(:disabled) {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.like-btn.active {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.dislike-btn {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.dislike-btn:hover:not(:disabled) {
+  background: #dc3545;
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.dislike-btn.active {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.reaction-count {
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+.reaction-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.reaction-summary-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.reaction-summary-btn:hover {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.reaction-icon {
+  font-size: 16px;
+}
+
+.reaction-text {
+  font-weight: 500;
+}
+
+.auth-prompt-reactions {
+  margin-top: 1rem;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.auth-prompt-reactions p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.auth-prompt-reactions a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-prompt-reactions a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .post-reactions {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+  }
+
+  .reaction-buttons {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .reaction-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-width: 70px;
+  }
+
+  .reaction-summary {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  .reaction-summary-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .reaction-icon {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reaction-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .reaction-btn {
+    width: 100%;
+    max-width: 200px;
+    padding: 12px 16px;
+  }
+
+  .reaction-summary-btn {
+    justify-content: center;
+  }
+}
