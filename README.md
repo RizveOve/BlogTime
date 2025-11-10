@@ -76,6 +76,41 @@ npm start
 
 The app will automatically migrate existing sample data to Firebase on first run.
 
+## Deployment
+
+### Netlify Deployment
+
+1. **Build the project locally** to test:
+
+   ```bash
+   npm run build
+   ```
+
+2. **Deploy to Netlify**:
+
+   - Connect your GitHub repository to Netlify
+   - Set build command: `npm run build`
+   - Set publish directory: `build`
+
+3. **Set Environment Variables in Netlify**:
+
+   - Go to Site Settings → Environment Variables
+   - Add all the Firebase environment variables:
+     - `REACT_APP_FIREBASE_API_KEY`
+     - `REACT_APP_FIREBASE_AUTH_DOMAIN`
+     - `REACT_APP_FIREBASE_PROJECT_ID`
+     - `REACT_APP_FIREBASE_STORAGE_BUCKET`
+     - `REACT_APP_FIREBASE_MESSAGING_SENDER_ID`
+     - `REACT_APP_FIREBASE_APP_ID`
+
+4. **Deploy**: Netlify will automatically build and deploy your site
+
+### Other Deployment Options
+
+- **Vercel**: Similar process, set environment variables in project settings
+- **Firebase Hosting**: Use `firebase deploy` after setting up Firebase CLI
+- **GitHub Pages**: Requires additional configuration for client-side routing
+
 ### Available Scripts
 
 - `npm start` - Runs the app in development mode
@@ -107,14 +142,23 @@ service cloud.firestore {
 }
 ```
 
-### Environment Variables (Optional)
+### Environment Variables
 
-For production, consider using environment variables for Firebase config:
+The application uses environment variables for Firebase configuration. Copy `.env.example` to `.env` and fill in your Firebase project details:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` with your Firebase configuration:
 
 ```bash
 REACT_APP_FIREBASE_API_KEY=your_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
 REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_project_id.firebasestorage.app
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
 
 ## Demo Credentials
