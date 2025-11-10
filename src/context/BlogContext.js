@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { blogPosts as initialPosts } from '../data/blogPosts';
+import { blogService } from '../firebase/blogService';
+import { checkMigrationStatus, migrateDataToFirebase } from '../firebase/migrationScript';
 
 const BlogContext = createContext();
 
@@ -13,73 +14,105 @@ export const useBlog = () => {
 
 export const BlogProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Load posts from localStorage or use initial posts
-    const savedPosts = localStorage.getItem('blogPosts');
-    if (savedPosts) {
-      const loadedPosts = JSON.parse(savedPosts);
-      setPosts(loadedPosts);
-    } else {
-      // Add status and authorId to initial posts
-      const postsWithStatus = initialPosts.map(post => ({
-        ...post,
-        status: 'published',
-        authorId: 1,
-        createdBy: post.author
-      }));
-      setPosts(postsWithStatus);
-      localStorage.setItem('blogPosts', JSON.stringify(postsWithStatus));
-    }
+    initializePosts();
   }, []);
 
-  const savePosts = (newPosts) => {
-    setPosts(newPosts);
-    localStorage.setItem('blogPosts', JSON.stringify(newPosts));
+  const initializePosts = async () => {
+    try {
+      setLoading(true);
+      
+      // Check if we have data in Firebase
+      const hasMigratedData = await checkMigrationStatus();
+      
+      if (!hasMigratedData) {
+        console.log('No data found in Firebase, running migration...');
+        await migrateDataToFirebase();
+      }
+      
+      // Load posts from Firebase
+      const firebasePosts = await blogService.getAllPosts();
+      setPosts(firebasePosts);
+      
+    } catch (error) {
+      console.error('Error initializing posts:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const addPost = (post, user) => {
-    const newPost = {
-      ...post,
-      id: Math.max(...posts.map(p => p.id), 0) + 1,
-      date: new Date().toISOString().split('T')[0],
-      authorId: user.id,
-      status: user.role === 'master' ? 'published' : 'pending',
-      createdBy: user.name
-    };
-    const newPosts = [newPost, ...posts];
-    savePosts(newPosts);
-    return newPost;
+  const refreshPosts = async () => {
+    try {
+      const firebasePosts = await blogService.getAllPosts();
+      setPosts(firebasePosts);
+    } catch (error) {
+      console.error('Error refreshing posts:', error);
+      setError(error.message);
+    }
   };
 
-  const updatePost = (id, updatedPost) => {
-    const newPosts = posts.map(post => 
-      post.id === id ? { ...post, ...updatedPost } : post
-    );
-    savePosts(newPosts);
+  const addPost = async (post, user) => {
+    try {
+      const newPost = await blogService.addPost(post, user);
+      await refreshPosts();
+      return newPost;
+    } catch (error) {
+      console.error('Error adding post:', error);
+      setError(error.message);
+      throw error;
+    }
   };
 
-  const deletePost = (id) => {
-    const newPosts = posts.filter(post => post.id !== id);
-    savePosts(newPosts);
+  const updatePost = async (id, updatedPost) => {
+    try {
+      await blogService.updatePost(id, updatedPost);
+      await refreshPosts();
+    } catch (error) {
+      console.error('Error updating post:', error);
+      setError(error.message);
+      throw error;
+    }
+  };
+
+  const deletePost = async (id) => {
+    try {
+      await blogService.deletePost(id);
+      await refreshPosts();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      setError(error.message);
+      throw error;
+    }
   };
 
   const getPost = (id) => {
-    return posts.find(post => post.id === parseInt(id));
+    return posts.find(post => post.id === id);
   };
 
-  const approvePost = (id) => {
-    const newPosts = posts.map(post => 
-      post.id === id ? { ...post, status: 'published' } : post
-    );
-    savePosts(newPosts);
+  const approvePost = async (id) => {
+    try {
+      await blogService.approvePost(id);
+      await refreshPosts();
+    } catch (error) {
+      console.error('Error approving post:', error);
+      setError(error.message);
+      throw error;
+    }
   };
 
-  const rejectPost = (id) => {
-    const newPosts = posts.map(post => 
-      post.id === id ? { ...post, status: 'rejected' } : post
-    );
-    savePosts(newPosts);
+  const rejectPost = async (id) => {
+    try {
+      await blogService.rejectPost(id);
+      await refreshPosts();
+    } catch (error) {
+      console.error('Error rejecting post:', error);
+      setError(error.message);
+      throw error;
+    }
   };
 
   const getPublishedPosts = () => {
@@ -96,6 +129,8 @@ export const BlogProvider = ({ children }) => {
 
   const value = {
     posts,
+    loading,
+    error,
     addPost,
     updatePost,
     deletePost,
@@ -104,7 +139,8 @@ export const BlogProvider = ({ children }) => {
     rejectPost,
     getPublishedPosts,
     getPendingPosts,
-    getUserPosts
+    getUserPosts,
+    refreshPosts
   };
 
   return (

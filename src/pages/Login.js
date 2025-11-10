@@ -13,13 +13,17 @@ const Login = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
-    const result = login(email, password);
-    if (!result.success) {
-      setError(result.error);
+    try {
+      const result = await login(email, password);
+      if (!result.success) {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError('Login failed. Please try again.');
     }
   };
 

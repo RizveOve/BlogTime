@@ -2,8 +2,24 @@ import { Link } from 'react-router-dom';
 import { useBlog } from '../context/BlogContext';
 
 const Home = () => {
-  const { getPublishedPosts } = useBlog();
+  const { getPublishedPosts, loading, error } = useBlog();
   const posts = getPublishedPosts();
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="loading">Loading posts...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <div className="error">Error loading posts: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -15,21 +31,25 @@ const Home = () => {
       <section className="blog-posts">
         <h2>Latest Posts</h2>
         <div className="blog-grid">
-          {posts.map(post => (
-            <article key={post.id} className="blog-card">
-              <img src={post.image} alt={post.title} />
-              <div className="blog-card-content">
-                <div className="blog-meta">
-                  By {post.author} • {post.date}
+          {posts.length === 0 ? (
+            <p>No posts available yet.</p>
+          ) : (
+            posts.map(post => (
+              <article key={post.id} className="blog-card">
+                <img src={post.image} alt={post.title} />
+                <div className="blog-card-content">
+                  <div className="blog-meta">
+                    By {post.author} • {post.date}
+                  </div>
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                  <Link to={`/post/${post.id}`} className="read-more">
+                    Read More →
+                  </Link>
                 </div>
-                <h3>{post.title}</h3>
-                <p>{post.excerpt}</p>
-                <Link to={`/post/${post.id}`} className="read-more">
-                  Read More →
-                </Link>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))
+          )}
         </div>
       </section>
     </div>

@@ -32,7 +32,8 @@ A modern, responsive blog application built with React that features user authen
 - **Routing**: React Router DOM 6.8.0
 - **Styling**: CSS3 with responsive design
 - **State Management**: React Context API
-- **Data Storage**: Local Storage (for demo purposes)
+- **Database**: Firebase Firestore
+- **Authentication**: Firebase Auth (ready for integration)
 - **Build Tool**: Create React App
 
 ## Getting Started
@@ -41,6 +42,7 @@ A modern, responsive blog application built with React that features user authen
 
 - Node.js (version 14 or higher)
 - npm or yarn package manager
+- Firebase project (for data storage)
 
 ### Installation
 
@@ -57,13 +59,22 @@ cd react-blog
 npm install
 ```
 
-3. Start the development server:
+3. Firebase Setup:
+
+   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Firestore Database
+   - Update the Firebase configuration in `src/firebase/config.js` with your project credentials
+   - Set up Firestore security rules (see Firebase Configuration section below)
+
+4. Start the development server:
 
 ```bash
 npm start
 ```
 
-4. Open your browser and navigate to `http://localhost:3000`
+5. Open your browser and navigate to `http://localhost:3000`
+
+The app will automatically migrate existing sample data to Firebase on first run.
 
 ### Available Scripts
 
@@ -71,6 +82,40 @@ npm start
 - `npm build` - Builds the app for production
 - `npm test` - Launches the test runner
 - `npm eject` - Ejects from Create React App (one-way operation)
+
+## Firebase Configuration
+
+### Firestore Security Rules
+
+Add these security rules to your Firestore database:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read access to published blog posts
+    match /blogPosts/{document} {
+      allow read: if resource.data.status == 'published' || request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // Allow authenticated users to manage users collection
+    match /users/{document} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+
+### Environment Variables (Optional)
+
+For production, consider using environment variables for Firebase config:
+
+```bash
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+```
 
 ## Demo Credentials
 
@@ -140,18 +185,13 @@ src/
 
 ### Data Persistence
 
-Currently uses localStorage for data persistence, making it perfect for:
+Uses Firebase Firestore for data persistence, providing:
 
-- Demo purposes
-- Local development
-- Prototyping
-
-For production use, consider integrating with:
-
-- Firebase
-- MongoDB
-- PostgreSQL
-- Any REST API backend
+- Real-time data synchronization
+- Scalable cloud storage
+- Automatic data migration from sample posts
+- Secure access with authentication rules
+- Offline support (when configured)
 
 ## Customization
 
@@ -209,6 +249,29 @@ This project is open source and available under the [MIT License](LICENSE).
 - [ ] SEO optimization
 - [ ] Performance analytics
 - [ ] Mobile app version
+
+## Troubleshooting
+
+### Firebase Connection Issues
+
+If you encounter Firebase connection problems:
+
+1. **Check your Firebase configuration** in `src/firebase/config.js`
+2. **Verify Firestore is enabled** in your Firebase project
+3. **Check browser console** for detailed error messages
+4. **Test Firebase connection** by opening browser dev tools and running:
+   ```javascript
+   import("./src/utils/testFirebase.js").then((module) =>
+     module.testFirebaseConnection()
+   );
+   ```
+
+### Common Issues
+
+- **"Permission denied" errors**: Check your Firestore security rules
+- **"Firebase not initialized"**: Verify your Firebase config is correct
+- **Posts not loading**: Check browser network tab for failed requests
+- **Migration not running**: Clear browser cache and reload
 
 ## Support
 

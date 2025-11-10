@@ -26,7 +26,7 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -40,16 +40,20 @@ const Register = () => {
       return;
     }
 
-    const result = register({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password
-    });
+    try {
+      const result = await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
 
-    if (result.success) {
-      setSuccess(true);
-    } else {
-      setError(result.error);
+      if (result.success) {
+        setSuccess(true);
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError('Registration failed. Please try again.');
     }
   };
 

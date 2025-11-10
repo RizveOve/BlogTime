@@ -50,13 +50,14 @@ const EditPost = () => {
 
     try {
       if (isEditing) {
-        updatePost(parseInt(id), formData);
+        await updatePost(id, formData);
       } else {
-        addPost(formData, user);
+        await addPost(formData, user);
       }
       navigate('/dashboard');
     } catch (error) {
       console.error('Error saving post:', error);
+      alert('Failed to save post. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -21,18 +21,30 @@ const Dashboard = () => {
   
 
 
-  const handleDelete = (id, title) => {
+  const handleDelete = async (id, title) => {
     if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
-      deletePost(id);
+      try {
+        await deletePost(id);
+      } catch (error) {
+        alert('Failed to delete post. Please try again.');
+      }
     }
   };
 
-  const handleApprove = (id) => {
-    approvePost(id);
+  const handleApprove = async (id) => {
+    try {
+      await approvePost(id);
+    } catch (error) {
+      alert('Failed to approve post. Please try again.');
+    }
   };
 
-  const handleReject = (id) => {
-    rejectPost(id);
+  const handleReject = async (id) => {
+    try {
+      await rejectPost(id);
+    } catch (error) {
+      alert('Failed to reject post. Please try again.');
+    }
   };
 
   return (
