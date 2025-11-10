@@ -24,7 +24,7 @@ const Home = () => {
   return (
     <div className="container">
       <section className="hero">
-        <h1>Welcome to My Blog</h1>
+        <h1>Welcome to BlogTime</h1>
         <p>Discover insights about web development, programming, and technology</p>
       </section>
       

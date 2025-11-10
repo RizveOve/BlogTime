@@ -5,12 +5,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB6pzetJENpnHpiVlAlNssNdM0wRpyDHMg",
-  authDomain: "huldra-test1.firebaseapp.com",
-  projectId: "huldra-test1",
-  storageBucket: "huldra-test1.appspot.com",
-  messagingSenderId: "525546687842",
-  appId: "1:525546687842:web:b4d956366f581e0439b03b"
+  apiKey: "AIzaSyBEARRDl7FzQnnAqnFxPPtsCs0qGH7GO-4",
+  authDomain: "blogtime-2044c.firebaseapp.com",
+  projectId: "blogtime-2044c",
+  storageBucket: "blogtime-2044c.firebasestorage.app",
+  messagingSenderId: "1054684471575",
+  appId: "1:1054684471575:web:44f3a96d544d235f421752"
 };
 
 // Initialize Firebase

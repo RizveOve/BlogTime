@@ -14,12 +14,25 @@ export const migrateDataToFirebase = async () => {
       role: 'master'
     };
 
-    let existingMaster = await userService.getUserByEmail(masterUser.email);
-    if (!existingMaster) {
-      existingMaster = await userService.addUser(masterUser);
-      console.log('Master user created:', existingMaster.id);
-    } else {
-      console.log('Master user already exists:', existingMaster.id);
+    let existingMaster;
+    try {
+      existingMaster = await userService.getUserByEmail(masterUser.email);
+      if (!existingMaster) {
+        console.log('Creating master user...');
+        existingMaster = await userService.addUser(masterUser);
+        console.log('Master user created:', existingMaster.id);
+      } else {
+        console.log('Master user already exists:', existingMaster.id);
+      }
+    } catch (error) {
+      console.error('Error with master user:', error);
+      // Create a fallback user object
+      existingMaster = {
+        id: 'master-fallback',
+        email: 'master@blog.com',
+        name: 'Master Author',
+        role: 'master'
+      };
     }
 
     // Migrate blog posts
@@ -33,33 +46,35 @@ export const migrateDataToFirebase = async () => {
         content: post.content,
         image: post.image,
         author: post.author,
-        date: post.date,
-        status: 'published',
-        authorId: existingMaster.id,
-        createdBy: post.author
+        date: post.date
       };
 
       try {
+        console.log(`Attempting to migrate: ${post.title}`);
         const newPost = await blogService.addPost(postData, existingMaster);
         migratedPosts.push(newPost);
-        console.log(`Migrated post: ${post.title}`);
+        console.log(`✅ Migrated post: ${post.title}`);
       } catch (error) {
-        console.error(`Error migrating post "${post.title}":`, error);
+        console.error(`❌ Error migrating post "${post.title}":`, error);
+        console.error('Error details:', error.code, error.message);
       }
     }
 
-    console.log(`Migration completed! Migrated ${migratedPosts.length} posts.`);
+    console.log(`Migration completed! Migrated ${migratedPosts.length} out of ${blogPosts.length} posts.`);
     return {
       success: true,
       migratedPosts: migratedPosts.length,
+      totalPosts: blogPosts.length,
       masterUser: existingMaster
     };
 
   } catch (error) {
     console.error('Migration failed:', error);
+    console.error('Error details:', error.code, error.message);
     return {
       success: false,
-      error: error.message
+      error: error.message,
+      code: error.code
     };
   }
 };

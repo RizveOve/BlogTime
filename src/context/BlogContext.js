@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { blogService } from '../firebase/blogService';
 import { checkMigrationStatus, migrateDataToFirebase } from '../firebase/migrationScript';
+import { testFirebaseConnection } from '../firebase/testConnection';
 
 const BlogContext = createContext();
 
@@ -25,12 +26,23 @@ export const BlogProvider = ({ children }) => {
     try {
       setLoading(true);
       
+      // First, test Firebase connection
+      console.log('Testing Firebase connection...');
+      const connectionTest = await testFirebaseConnection();
+      
+      if (!connectionTest.success) {
+        throw new Error(`Firebase connection failed: ${connectionTest.error}`);
+      }
+      
+      console.log('✅ Firebase connection successful');
+      
       // Check if we have data in Firebase
       const hasMigratedData = await checkMigrationStatus();
       
       if (!hasMigratedData) {
         console.log('No data found in Firebase, running migration...');
-        await migrateDataToFirebase();
+        const migrationResult = await migrateDataToFirebase();
+        console.log('Migration result:', migrationResult);
       }
       
       // Load posts from Firebase

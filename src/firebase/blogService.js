@@ -117,22 +117,35 @@ export const blogService = {
   // Add new post
   async addPost(postData, user) {
     try {
+      console.log('Adding post with user:', user);
+      console.log('Post data:', postData);
+      
       const newPost = {
-        ...postData,
-        authorId: user.id,
+        title: postData.title || '',
+        excerpt: postData.excerpt || '',
+        content: postData.content || '',
+        image: postData.image || '',
+        author: postData.author || user.name,
+        date: new Date().toISOString().split('T')[0],
+        authorId: user.id || 'unknown',
         status: user.role === 'master' ? 'published' : 'pending',
-        createdBy: user.name,
+        createdBy: user.name || 'Unknown Author',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
+      console.log('Attempting to add post to Firestore:', newPost);
       const docRef = await addDoc(collection(db, POSTS_COLLECTION), newPost);
+      console.log('Post added successfully with ID:', docRef.id);
+      
       return {
         id: docRef.id,
         ...newPost
       };
     } catch (error) {
       console.error('Error adding post:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
       throw error;
     }
   },

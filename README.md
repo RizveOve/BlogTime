@@ -1,4 +1,4 @@
-# React Blog
+# BlogTime
 
 A modern, responsive blog application built with React that features user authentication, content management, and a clean, intuitive interface for both readers and authors.
 
