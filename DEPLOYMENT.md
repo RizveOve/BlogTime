@@ -94,9 +94,10 @@ REACT_APP_FIREBASE_APP_ID=your_app_id
 
 1. **Build Fails**
 
-   - Check Node.js version compatibility
+   - Check Node.js version compatibility (use Node 18.x)
    - Verify all dependencies are installed
    - Check for TypeScript/ESLint errors
+   - ESLint warnings treated as errors in CI (fixed with CI=false in build script)
 
 2. **Environment Variables Not Working**
 

@@ -44,10 +44,10 @@ const About = () => {
               want to chat!
             </p>
             <div className="contact-links">
-              <a href="mailto:hello@example.com" className="btn">
+              <a href="mailto:hello@blogtime.com" className="btn">
                 Email Me
               </a>
-              <a href="#" className="btn">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="btn">
                 Follow on Twitter
               </a>
             </div>
